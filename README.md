@@ -15,3 +15,8 @@ Currently the modules are:
 - RAM usage
 - CPU Temperature
 
+## dwm integration
+
+dwmblocks can receive signals from dwm which carry information about which block was clicked
+and with which mouse button. [This page](https://dwm.suckless.org/patches/statuscmd/) both
+explains and supplies patches for everything you need to set this up yourself.
