@@ -38,7 +38,7 @@ static int statusContinue = 1;
 static void (*writestatus) () = setroot;
 
 //opens process *cmd and stores output in *output
-void getcmd(const Block *block, char *output)
+void getcmd(const Block *block, char *output, int last)
 {
 	strcpy(output, block->icon);
 	char *cmd = block->command;
@@ -49,9 +49,17 @@ void getcmd(const Block *block, char *output)
 	int i = strlen(block->icon);
 	fgets(output+i, CMDLENGTH-i, cmdf);
 	i = strlen(output);
-	if (delim != '\0' && --i)
-		output[i++] = delim;
-	output[i++] = '\0';
+    if (--i) {
+        if (!last && strlen(delim)) {
+            strcpy(output + i, delim);
+            i += strlen(delim);
+        } else if (last && strlen(rpad)) {
+            strcpy(output + i, rpad);
+            i += strlen(rpad);
+        }
+    }
+    output[i++] = ' ';
+	output[i] = '\0';
 	pclose(cmdf);
 }
 
@@ -62,7 +70,7 @@ void getcmds(int time)
 	{
 		current = blocks + i;
 		if ((current->interval != 0 && time % current->interval == 0) || time == -1)
-			getcmd(current,statusbar[i]);
+			getcmd(current,statusbar[i], i == LENGTH(blocks) - 1);
 	}
 }
 
@@ -74,7 +82,7 @@ void getsigcmds(int signal)
 	{
 		current = blocks + i;
 		if (current->signal == signal)
-			getcmd(current,statusbar[i]);
+			getcmd(current,statusbar[i], i == LENGTH(blocks) - 1);
 	}
 }
 
@@ -166,13 +174,6 @@ void termhandler(int signum)
 
 int main(int argc, char** argv)
 {
-	for(int i = 0; i < argc; i++)
-	{
-		if (!strcmp("-d",argv[i]))
-			delim = argv[++i][0];
-		else if(!strcmp("-p",argv[i]))
-			writestatus = pstdout;
-	}
 	signal(SIGTERM, termhandler);
 	signal(SIGINT, termhandler);
 	statusloop();

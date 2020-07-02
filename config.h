@@ -1,4 +1,3 @@
-//Modify this file to change what commands output to your statusbar, and recompile using the make command.
 static const Block blocks[] = {
     /* Icon, Command, Update, Interval, Update, Signal */
 
@@ -10,5 +9,6 @@ static const Block blocks[] = {
     {"", "cputemp", 1, 0},
 };
 
-//sets delimeter between status commands. NULL character ('\0') means no delimeter.
-static char delim = ' ';
+// Block delimiter and right padding
+static char delim[] = "  |  ";
+static char rpad[] = "  ";
