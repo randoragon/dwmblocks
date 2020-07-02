@@ -2,6 +2,8 @@ PREFIX ?= /usr/local
 
 output: dwmblocks.c config.h
 	cc `pkg-config --cflags x11` `pkg-config --libs x11` dwmblocks.c -o dwmblocks
+debug: dwmblocks.c config.h
+	cc -g `pkg-config --cflags x11` `pkg-config --libs x11` dwmblocks.c -o dwmblocks
 clean:
 	rm -f *.o *.gch dwmblocks
 install: output
