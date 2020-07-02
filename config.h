@@ -11,11 +11,11 @@ static const Block blocks[] = {
     // system updates
     {"📦", "cat ~/.cache/updatecount", 10, 0},
 
-    {"", "free -h | awk '/^Mem/ { print $3\"/\"$2 }' | sed s/i//g", 30, 0},
+    {"", "memory", 1, 0},
 
     {"", "cputemp", 1, 0},
 };
 
 // Block delimiter and right padding
-static char delim[] = "^c#FFFFFF^^b#000000^    ";
-static char rpad[] = "^c#FFFFFF^^b#000000^  ";
+static char delim[] = "^c#313131^^f4^^r0,0,1,20^^f4^^c#FFFFFF^^b#000000^";
+static char rpad[] = "^c#FFFFFF^^b#000000^^f5^";
