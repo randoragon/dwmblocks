@@ -4,8 +4,15 @@
 #include<unistd.h>
 #include<signal.h>
 #include<X11/Xlib.h>
-#define LENGTH(X)               (sizeof(X) / sizeof (X[0]))
-#define CMDLENGTH		200
+#include<sys/stat.h>
+#include<pwd.h>
+#include<fcntl.h>
+#define LENGTH(X)       (sizeof(X) / sizeof (X[0]))
+#define CMDLENGTH		1024     /* this should match SLENGTH macro in dwm */
+#define LINELENGTH      (CMDLENGTH*LENGTH(blocks))
+
+// fifo path relative to user HOME directory
+#define RELPATH ".cache/dwmblocks.fifo"
 
 typedef struct {
 	char* icon;
@@ -23,7 +30,7 @@ void setupsignals();
 void sighandler(int signum);
 #endif
 int getstatus(char *str, char *last);
-void setroot();
+void fifowrite();
 void statusloop();
 void termhandler(int signum);
 
@@ -34,10 +41,12 @@ static Display *dpy;
 static int screen;
 static Window root;
 static char statusbar[LENGTH(blocks)][CMDLENGTH] = {0};
-static char statusstr[2][256];
+static char statusstr[2][LINELENGTH];
 static char button[] = "\0";
 static int statusContinue = 1;
-static void (*writestatus) () = setroot;
+static void (*writestatus) () = fifowrite;
+static char fifopath[256];
+static int fifofd;
 
 //opens process *cmd and stores output in *output
 void getcmd(const Block *block, char *output, int last)
@@ -72,7 +81,6 @@ void getcmd(const Block *block, char *output, int last)
             i += strlen(rpad);
         }
     }
-    output[i++] = ' ';
 	output[i] = '\0';
 	pclose(cmdf);
 }
@@ -80,8 +88,7 @@ void getcmd(const Block *block, char *output, int last)
 void getcmds(int time)
 {
 	const Block* current;
-	for(int i = 0; i < LENGTH(blocks); i++)
-	{
+	for(int i = 0; i < LENGTH(blocks); i++) {
 		current = blocks + i;
 		if ((current->interval != 0 && time % current->interval == 0) || time == -1)
 			getcmd(current,statusbar[i], i == LENGTH(blocks) - 1);
@@ -103,7 +110,7 @@ void getsigcmds(int signal)
 void setupsignals()
 {
     /* initialize all real time signals with dummy handler */
-    struct sigaction sa;
+    struct sigaction sa, skill;
     for(int i = SIGRTMIN; i <= SIGRTMAX; i++)
         signal(i, dummysighandler);
 
@@ -127,22 +134,26 @@ int getstatus(char *str, char *last)
 	str[0] = '\0';
 	for(int i = 0; i < LENGTH(blocks); i++)
 		strcat(str, statusbar[i]);
-	str[strlen(str)-1] = '\0';
+    strcat(str, "\n");
 	return strcmp(str, last);//0 if they are the same
 }
 
-void setroot()
+void fifowrite()
 {
 	if (!getstatus(statusstr[0], statusstr[1]))//Only set root if text has changed.
 		return;
-	Display *d = XOpenDisplay(NULL);
-	if (d) {
-		dpy = d;
-	}
-	screen = DefaultScreen(dpy);
-	root = RootWindow(dpy, screen);
-	XStoreName(dpy, root, statusstr[0]);
-	XCloseDisplay(dpy);
+
+    write(fifofd, statusstr[0], CMDLENGTH);
+    printf("%s\n", statusstr[0]);
+    // Send a fake SIGUSR1 signal to dwm to update status text
+    Display *d = XOpenDisplay(NULL);
+    if (d) {
+        dpy = d;
+    }
+    screen = DefaultScreen(dpy);
+    root = RootWindow(dpy, screen);
+    XStoreName(dpy, root, "fsignal:10");
+    XCloseDisplay(dpy);
 }
 
 void pstdout()
@@ -195,6 +206,10 @@ void buttonhandler(int sig, siginfo_t *si, void *ucontext)
 
 void termhandler(int signum)
 {
+    if (fifofd) {
+        close(fifofd);
+    }
+    remove(fifopath);
 	statusContinue = 0;
 	exit(0);
 }
@@ -203,5 +218,37 @@ int main(int argc, char** argv)
 {
 	signal(SIGTERM, termhandler);
 	signal(SIGINT, termhandler);
+	signal(SIGPIPE, SIG_IGN);
+
+    // Construct fifo path
+    strcpy(fifopath, getpwuid(getuid())->pw_dir);
+    strcat(fifopath, "/");
+    strcat(fifopath, RELPATH);
+
+    // Prepare fifo file
+    /* If a file exists at the fifo path which either is not a named pipe OR there's no write perms,
+     * abort the operation as there's no way to proceed. In any other case either create a new fifo
+     * or try to connect to the found one.
+     */
+    if (access(fifopath, F_OK) != -1) {
+        // https://stackoverflow.com/questions/21468856/check-if-file-is-a-named-pipe-fifo-in-c
+        struct stat st;
+        if ((stat(fifopath, &st) || !S_ISFIFO(st.st_mode)) && remove(fifopath)) {
+            fprintf(stderr, "dwmblocks: a non-fifo file already exists at \"%s\" and remove failed\n", fifopath);
+            return 1;
+        }
+        if (access(fifopath, W_OK|R_OK) == -1) {
+            fprintf(stderr, "dwmblocks: fifo found but no read/write permissions\n");
+            return 1;
+        }
+    } else if (mkfifo(fifopath, (mode_t)0660)) {
+        fprintf(stderr, "dwmblocks: failed to initialize fifo at \"%s\"\n", fifopath);
+        return 1;
+    }
+    if (!(fifofd = open(fifopath, O_WRONLY|O_CREAT|O_TRUNC))) {
+        fprintf(stderr, "dwmblocks: failed to open fifo for writing\n");
+        return 1;
+    }
+
 	statusloop();
 }
