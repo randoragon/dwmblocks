@@ -22,4 +22,4 @@ and with which mouse button. [This page](https://dwm.suckless.org/patches/status
 explains and supplies patches for everything you need to set this up yourself.
 
 **NOTE:** I'm using my own implementation of dwm status bar. Vanilla dwm uses the WM\_NAME X property,
-my version uses named pipes and fake signals. Read about more details [here](https://github.com/Randoragon/dwm#status-bar-rewrite).
+my version uses shared memory and fake signals. Read about more details [here](https://github.com/Randoragon/dwm#status-bar-rewrite).

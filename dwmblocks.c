@@ -4,15 +4,15 @@
 #include<unistd.h>
 #include<signal.h>
 #include<X11/Xlib.h>
+#include<sys/mman.h>
 #include<sys/stat.h>
+#include<sys/types.h>
 #include<pwd.h>
 #include<fcntl.h>
 #define LENGTH(X)       (sizeof(X) / sizeof (X[0]))
 #define CMDLENGTH		1024     /* this should match SLENGTH macro in dwm */
 #define LINELENGTH      (CMDLENGTH*LENGTH(blocks))
-
-// fifo path relative to user HOME directory
-#define RELPATH ".cache/dwmblocks.fifo"
+#define SHM_NAME "/dwmstatus"
 
 typedef struct {
 	char* icon;
@@ -30,10 +30,10 @@ void setupsignals();
 void sighandler(int signum);
 #endif
 int getstatus(char *str, char *last);
-void fifowrite();
 void statusloop();
 void termhandler(int signum);
-
+void memwrite();
+void updatedwm();
 
 #include "config.h"
 
@@ -44,9 +44,9 @@ static char statusbar[LENGTH(blocks)][CMDLENGTH] = {0};
 static char statusstr[2][LINELENGTH];
 static char button[] = "\0";
 static int statusContinue = 1;
-static void (*writestatus) () = fifowrite;
-static char fifopath[256];
-static int fifofd;
+static void (*writestatus) () = memwrite;
+static char *sharedmemory;
+static int sharedmemoryfd;
 
 //opens process *cmd and stores output in *output
 void getcmd(const Block *block, char *output, int last)
@@ -138,13 +138,17 @@ int getstatus(char *str, char *last)
 	return strcmp(str, last);//0 if they are the same
 }
 
-void fifowrite()
+void memwrite()
 {
 	if (!getstatus(statusstr[0], statusstr[1]))//Only set root if text has changed.
 		return;
+    strcpy(sharedmemory, statusstr[0]);
 
-    write(fifofd, statusstr[0], CMDLENGTH);
-    printf("%s\n", statusstr[0]);
+    updatedwm();
+}
+
+void updatedwm()
+{
     // Send a fake SIGUSR1 signal to dwm to update status text
     Display *d = XOpenDisplay(NULL);
     if (d) {
@@ -206,9 +210,11 @@ void buttonhandler(int sig, siginfo_t *si, void *ucontext)
 
 void termhandler(int signum)
 {
-    if (fifofd) {
-        close(fifofd);
-    }
+    strcpy(sharedmemory, "^c#FFFFFF^dwmblocks is offline^f5^");
+    updatedwm();
+
+    shm_unlink(sharedmemory);
+
 	statusContinue = 0;
 	exit(0);
 }
@@ -217,32 +223,18 @@ int main(int argc, char** argv)
 {
 	signal(SIGTERM, termhandler);
 	signal(SIGINT, termhandler);
-	signal(SIGPIPE, SIG_IGN);
 
-    // Construct fifo path
-    strcpy(fifopath, getpwuid(getuid())->pw_dir);
-    strcat(fifopath, "/");
-    strcat(fifopath, RELPATH);
-
-    // Try to open the fifo file
-    if (access(fifopath, F_OK) != -1) {
-        // https://stackoverflow.com/questions/21468856/check-if-file-is-a-named-pipe-fifo-in-c
-        struct stat st;
-        if ((stat(fifopath, &st) || !S_ISFIFO(st.st_mode))) {
-            fprintf(stderr, "dwmblocks: \"%s\" exists but is not a fifo file\n", fifopath);
-            return 1;
-        }
-        if (access(fifopath, W_OK) == -1) {
-            fprintf(stderr, "dwmblocks: fifo found but no write permissions\n");
-            return 1;
-        }
-    } else {
-        fprintf(stderr, "dwmblocks: fifo file not found\n");
-        return 1;
+    /* initialize shared memory */
+    sharedmemoryfd = shm_open(SHM_NAME, O_CREAT|O_RDWR, S_IRWXU|S_IRWXG);
+    if (sharedmemoryfd < 0) {
+        perror("dwmblocks: failed to open shared memory");
+        return EXIT_FAILURE;
     }
-    if (!(fifofd = open(fifopath, O_WRONLY|O_CREAT|O_TRUNC))) {
-        fprintf(stderr, "dwmblocks: failed to open fifo for writing\n");
-        return 1;
+    ftruncate(sharedmemoryfd, CMDLENGTH);
+    sharedmemory = (char*)mmap(NULL, CMDLENGTH, PROT_READ|PROT_WRITE, MAP_SHARED, sharedmemoryfd, 0);
+    if (sharedmemory == NULL) {
+        fprintf(stderr, "dwmblocks: failed to run mmap");
+        return EXIT_FAILURE;
     }
 
 	statusloop();

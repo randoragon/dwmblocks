@@ -20,4 +20,4 @@ static const Block blocks[] = {
 
 // Block delimiter and right padding
 static char delim[] = "^c#313131^^f4^^r0,0,1,20^^f4^^c#FFFFFF^^b#000000^";
-static char rpad[] = "^c#FFFFFF^^b#000000^^f5^";
+static char rpad[] = "^f5^";
