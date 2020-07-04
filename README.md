@@ -12,6 +12,7 @@ those scripts directly in this repo, instead they can all be found in my [dotfil
 Currently the modules are:
 
 - pacman updates count
+- newsboat unread RSS feeds
 - RAM usage
 - CPU Temperature
 
