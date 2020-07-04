@@ -9,9 +9,9 @@ static const Block blocks[] = {
     /* Command, Update Interval, Update Signal */
 
     // system updates
-    {"cat ~/.cache/updatecount", 10, 0},
+    {"cat ~/.cache/updatecount", 0, 4},
 
-    {"cat ~/.cache/newsboat_notify", 10, 0},
+    {"cat ~/.cache/newsboat_notify", 0, 5},
 
     {"~/.scripts/dwmblocks/memory", 1, 0},
 
