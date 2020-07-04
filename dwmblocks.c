@@ -230,8 +230,8 @@ int main(int argc, char** argv)
         perror("dwmblocks: failed to open shared memory");
         return EXIT_FAILURE;
     }
-    ftruncate(sharedmemoryfd, CMDLENGTH);
-    sharedmemory = (char*)mmap(NULL, CMDLENGTH, PROT_READ|PROT_WRITE, MAP_SHARED, sharedmemoryfd, 0);
+    ftruncate(sharedmemoryfd, LINELENGTH);
+    sharedmemory = (char*)mmap(NULL, LINELENGTH, PROT_READ|PROT_WRITE, MAP_SHARED, sharedmemoryfd, 0);
     if (sharedmemory == NULL) {
         fprintf(stderr, "dwmblocks: failed to run mmap");
         return EXIT_FAILURE;
