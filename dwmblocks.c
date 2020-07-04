@@ -209,7 +209,6 @@ void termhandler(int signum)
     if (fifofd) {
         close(fifofd);
     }
-    remove(fifopath);
 	statusContinue = 0;
 	exit(0);
 }
@@ -225,24 +224,20 @@ int main(int argc, char** argv)
     strcat(fifopath, "/");
     strcat(fifopath, RELPATH);
 
-    // Prepare fifo file
-    /* If a file exists at the fifo path which either is not a named pipe OR there's no write perms,
-     * abort the operation as there's no way to proceed. In any other case either create a new fifo
-     * or try to connect to the found one.
-     */
+    // Try to open the fifo file
     if (access(fifopath, F_OK) != -1) {
         // https://stackoverflow.com/questions/21468856/check-if-file-is-a-named-pipe-fifo-in-c
         struct stat st;
-        if ((stat(fifopath, &st) || !S_ISFIFO(st.st_mode)) && remove(fifopath)) {
-            fprintf(stderr, "dwmblocks: a non-fifo file already exists at \"%s\" and remove failed\n", fifopath);
+        if ((stat(fifopath, &st) || !S_ISFIFO(st.st_mode))) {
+            fprintf(stderr, "dwmblocks: \"%s\" exists but is not a fifo file\n", fifopath);
             return 1;
         }
-        if (access(fifopath, W_OK|R_OK) == -1) {
-            fprintf(stderr, "dwmblocks: fifo found but no read/write permissions\n");
+        if (access(fifopath, W_OK) == -1) {
+            fprintf(stderr, "dwmblocks: fifo found but no write permissions\n");
             return 1;
         }
-    } else if (mkfifo(fifopath, (mode_t)0660)) {
-        fprintf(stderr, "dwmblocks: failed to initialize fifo at \"%s\"\n", fifopath);
+    } else {
+        fprintf(stderr, "dwmblocks: fifo file not found\n");
         return 1;
     }
     if (!(fifofd = open(fifopath, O_WRONLY|O_CREAT|O_TRUNC))) {
