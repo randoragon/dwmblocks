@@ -3,6 +3,8 @@
 This is Randoragon's build of dwmblocks, a modular status bar for dwm written in c.
 See the original repo at [github.com/torrinfail/dwmblocks](https://github.com/torrinfail/dwmblocks).
 
+![preview](preview.png)
+
 ## Modules
 
 Since some modules need a lot of shell trickery to work, it's easier to write entire dedicated scripts,
