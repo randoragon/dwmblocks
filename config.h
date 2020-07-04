@@ -9,13 +9,13 @@ static const Block blocks[] = {
     /* Icon, Command, Update, Interval, Update, Signal */
 
     // system updates
-    {"", "cat ~/.cache/updatecount", 10, 0},
+    {"cat ~/.cache/updatecount", 10, 0},
 
-    {"", "cat ~/.cache/newsboat_notify", 10, 0},
+    {"cat ~/.cache/newsboat_notify", 10, 0},
 
-    {"", "memory", 1, 0},
+    {"~/.scripts/dwmblocks/memory", 1, 0},
 
-    {"", "cputemp", 1, 0},
+    {"~/.scripts/dwmblocks/cputemp", 1, 0},
 };
 
 // Block delimiter and right padding

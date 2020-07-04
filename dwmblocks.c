@@ -15,7 +15,6 @@
 #define SHM_NAME "/dwmstatus"
 
 typedef struct {
-	char* icon;
 	char* command;
 	unsigned int interval;
 	unsigned int signal;
@@ -49,14 +48,13 @@ static int sharedmemoryfd;
 //opens process *cmd and stores output in *output
 void getcmd(const Block *block, char *output, int last)
 {
-	strcpy(output, block->icon);
 	char *cmd = block->command;
     FILE *cmdf = popen(cmd,"r");
 	if (!cmdf)
 		return;
 	char c;
-	int i = strlen(block->icon);
-	fgets(output+i, CMDLENGTH-i, cmdf);
+	int i;
+	fgets(output, CMDLENGTH, cmdf);
 	i = strlen(output);
     if (--i) {
         if (!last && strlen(delim)) {
