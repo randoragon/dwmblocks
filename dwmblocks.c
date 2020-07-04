@@ -48,24 +48,22 @@ static int sharedmemoryfd;
 //opens process *cmd and stores output in *output
 void getcmd(const Block *block, char *output, int last)
 {
+    output[0] = '\0';
 	char *cmd = block->command;
     FILE *cmdf = popen(cmd,"r");
-	if (!cmdf)
-		return;
-	char c;
-	int i;
-	fgets(output, CMDLENGTH, cmdf);
-	i = strlen(output);
-    if (--i) {
-        if (!last && strlen(delim)) {
-            strcpy(output + i, delim);
-            i += strlen(delim);
-        } else if (last && strlen(rpad)) {
-            strcpy(output + i, rpad);
-            i += strlen(rpad);
-        }
+    if (!cmdf) {
+        return;
     }
-	output[i] = '\0';
+
+	int i;
+    fgets(output, CMDLENGTH, cmdf);
+
+    // trim newlines
+    for (i = 0; i < CMDLENGTH && output[i] != '\n' && output[i] != '\0'; i++);
+    output[i] = '\0';
+
+    if (i)
+        strcat(output, last ? rpad : delim);
 	pclose(cmdf);
 }
 
@@ -111,7 +109,6 @@ int getstatus(char *str, char *last)
 	str[0] = '\0';
 	for(int i = 0; i < LENGTH(blocks); i++)
 		strcat(str, statusbar[i]);
-    strcat(str, "\n");
 	return strcmp(str, last);//0 if they are the same
 }
 
