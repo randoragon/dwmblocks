@@ -13,6 +13,8 @@ static const Block blocks[] = {
 
     {"cat ~/.cache/newsboat_notify", 0, 5},
 
+    {"~/.scripts/dwmblocks/mpd", 1, 6},
+
     {"~/.scripts/dwmblocks/memory", 1, 0},
 
     {"~/.scripts/dwmblocks/cputemp", 1, 0},
