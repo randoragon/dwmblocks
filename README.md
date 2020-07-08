@@ -19,6 +19,7 @@ Currently the modules are (in order from left):
 - remaining storage space
 - RAM usage
 - CPU Temperature
+- network traffic (bytes sent & received per sec)
 - PulseAudio volume
 - date
 - time

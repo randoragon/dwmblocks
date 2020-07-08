@@ -20,6 +20,8 @@ static const Block blocks[] = {
     {"~/.scripts/dwmblocks/memory", 1, 0},
 
     {"~/.scripts/dwmblocks/cputemp", 1, 0},
+
+    {"~/.scripts/dwmblocks/network", 1, 0},
     
     {"~/.scripts/dwmblocks/pulseaudio", 5, 7},
 
@@ -29,5 +31,5 @@ static const Block blocks[] = {
 };
 
 // Block delimiter and right padding
-static char delim[] = "^c#313131^^f4^^r0,0,1,20^^f5^^c#FFFFFF^^b#000000^";
+static char delim[] = "^c#313131^^f4^^r0,0,1,19^^f5^^d^";
 static char rpad[] = "^f5^";
