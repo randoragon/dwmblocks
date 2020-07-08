@@ -19,6 +19,8 @@ static const Block blocks[] = {
 
     {"~/.scripts/dwmblocks/memory", 1, 0},
 
+    {"~/.scripts/dwmblocks/cpuload", 1, 0},
+
     {"~/.scripts/dwmblocks/cputemp", 1, 0},
 
     {"~/.scripts/dwmblocks/network", 1, 0},
