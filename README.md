@@ -16,6 +16,7 @@ Currently the modules are:
 - pacman updates count
 - newsboat unread RSS feeds
 - [MPD playback status](https://github.com/randoragon/randoutils/tree/master/dwmbmpd)
+- remaining storage space
 - RAM usage
 - CPU Temperature
 
