@@ -106,7 +106,7 @@ void setupsignals()
 int getstatus(char *str, char *last)
 {
 	strcpy(last, str);
-	str[0] = '\0';
+    strcpy(str, lpad);
 	for(int i = 0; i < LENGTH(blocks); i++)
 		strcat(str, statusbar[i]);
 	return strcmp(str, last);//0 if they are the same
