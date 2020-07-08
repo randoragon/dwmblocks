@@ -30,3 +30,9 @@ Currently the modules are (in order from left):
 
 **NOTE:** I'm using my own implementation of dwm status bar. Vanilla dwm uses the WM\_NAME X property,
 my version uses shared memory and fake signals. Read about more details [here](https://github.com/Randoragon/dwm#status-bar-rewrite).
+
+## Icons
+
+I use [FontAwesome](https://fontawesome.com/) as my source for icons. This of course means that
+dwm has to be compiled with fontawesome available as a fallback font. Check [my dwm repo](https://github.com/Randoragon/dwm)
+for any clarifications.
