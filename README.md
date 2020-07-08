@@ -11,7 +11,7 @@ Since some modules need a lot of shell trickery to work, it's easier to write en
 add them to PATH and have dwmblocks run clean, short commands. For simplicity's sake I don't maintain
 those scripts directly in this repo, instead they can all be found in my [dotfiles repo](https://github.com/randoragon/dotfiles).
 
-Currently the modules are:
+Currently the modules are (in order from left):
 
 - pacman updates count
 - newsboat unread RSS feeds
@@ -19,6 +19,9 @@ Currently the modules are:
 - remaining storage space
 - RAM usage
 - CPU Temperature
+- PulseAudio volume
+- date
+- time
 
 ## dwm integration
 

@@ -21,6 +21,8 @@ static const Block blocks[] = {
 
     {"~/.scripts/dwmblocks/cputemp", 1, 0},
     
+    {"~/.scripts/dwmblocks/pulseaudio", 5, 7},
+
     {"~/.scripts/dwmblocks/date", 1, 0},
 
     {"~/.scripts/dwmblocks/time", 1, 0},
