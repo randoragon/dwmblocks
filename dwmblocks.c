@@ -10,7 +10,7 @@
 #include<pwd.h>
 #include<fcntl.h>
 #define LENGTH(X)       (sizeof(X) / sizeof (X[0]))
-#define CMDLENGTH		1024     /* this should match SLENGTH macro in dwm */
+#define CMDLENGTH		300     /* this should match DWMBLOCKS_CMDLENGTH macro in dwm */
 #define LINELENGTH      (CMDLENGTH*LENGTH(blocks))
 #define SHM_NAME "/dwmstatus"
 
