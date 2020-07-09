@@ -19,7 +19,7 @@ Currently the modules are (in order from left):
 - [MPD playback status](https://github.com/randoragon/randoutils/tree/master/dwmbmpd)
 - remaining storage space
 - RAM usage
-- CPU load overall & for each core
+- [CPU load](https://github.com/randoragon/randoutils/tree/master/dwmbcpul)
 - CPU Temperature
 - network traffic (bytes sent & received per sec)
 - PulseAudio volume
