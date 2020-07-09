@@ -32,6 +32,7 @@ void statusloop();
 void termhandler(int signum);
 void memwrite();
 void updatedwm();
+void cleanup();
 
 #include "config.h"
 
@@ -44,6 +45,7 @@ static int statusContinue = 1;
 static void (*writestatus) () = memwrite;
 static char *sharedmemory;
 static int sharedmemoryfd;
+static FILE *dwmbcpul;
 
 //opens process *cmd and stores output in *output
 void getcmd(const Block *block, char *output, int last)
@@ -177,13 +179,21 @@ void sighandler(int signum)
 
 void termhandler(int signum)
 {
-    strcpy(sharedmemory, "^c#FFFFFF^dwmblocks is offline^f5^");
+    strcpy(sharedmemory, "^f5^^c#FFFFFF^dwmblocks is offline^f5^");
     updatedwm();
 
     shm_unlink(sharedmemory);
 
 	statusContinue = 0;
+    cleanup();
 	exit(0);
+}
+
+void cleanup()
+{
+    if (dwmbcpul) {
+        pclose(dwmbcpul);
+    }
 }
 
 int main(int argc, char** argv)
@@ -204,5 +214,12 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
+    /* spawn subprocesses */
+    FILE *dwmbcpul;
+    char cmd[100] = "~/.scripts/dwmblocks/cpuload ";
+    sprintf(cmd + strlen(cmd), "%d", getpid());
+    dwmbcpul = popen(cmd, "r");
+
 	statusloop();
+    cleanup();
 }
