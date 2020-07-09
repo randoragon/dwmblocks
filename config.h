@@ -5,6 +5,8 @@
  * will very likely crash instantly.
  */
 
+#define DWMBCPUL_CMD "~/.scripts/dwmblocks/cpuload"
+
 static const Block blocks[] = {
     /* Command, Update Interval, Update Signal */
 
@@ -19,7 +21,7 @@ static const Block blocks[] = {
 
     {"~/.scripts/dwmblocks/memory", 1, 0},
 
-    {"cat ~/.cache/dwmbcpul", 0, 8},
+    {"cat ~/.cache/dwmbcpul", 1, 0},
 
     {"~/.scripts/dwmblocks/cputemp", 1, 0},
 

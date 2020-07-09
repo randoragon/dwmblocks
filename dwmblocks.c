@@ -216,9 +216,7 @@ int main(int argc, char** argv)
 
     /* spawn subprocesses */
     FILE *dwmbcpul;
-    char cmd[100] = "~/.scripts/dwmblocks/cpuload ";
-    sprintf(cmd + strlen(cmd), "%d", getpid());
-    dwmbcpul = popen(cmd, "r");
+    dwmbcpul = popen(DWMBCPUL_CMD, "r");
 
 	statusloop();
     cleanup();
