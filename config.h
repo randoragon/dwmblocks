@@ -11,7 +11,7 @@ static const Block blocks[] = {
     /* Command, Update Interval, Update Signal */
 
     // system updates
-    {"~/.scripts/dwmblocks/updates", 1800, 4},
+    {"cat ~/.cache/dwmbupdates", 0, 4},
 
     {"cat ~/.cache/newsboat_notify", 0, 5},
 
