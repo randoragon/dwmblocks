@@ -1,11 +1,11 @@
 /* BE WARNED
- * dwmblocks.c defines a CMDLENGTH macro which holds the number of characters
- * allowed per block output. Be sure CMDLENGTH is always well above your safe
- * output length (this includes delim and rpad), because if you overflow, dwm
- * will very likely crash instantly.
+ * the CMDLENGTH macro holds the number of characters allowed per block output.
+ * Be sure CMDLENGTH is always well above your safe output length (this includes
+ * delim and rpad), because if you overflow, dwm will very likely crash instantly.
  */
 
-#define DWMBCPUL_CMD "~/.scripts/dwmblocks/cpuload"
+#define CMDLENGTH		300     /* this should match DWMBLOCKS_CMDLENGTH macro in dwm */
+#define DWMBCPUL_CMD    "~/.scripts/dwmblocks/cpuload"
 
 static const Block blocks[] = {
     /* Command, Update Interval, Update Signal */

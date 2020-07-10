@@ -9,10 +9,6 @@
 #include<sys/types.h>
 #include<pwd.h>
 #include<fcntl.h>
-#define LENGTH(X)       (sizeof(X) / sizeof (X[0]))
-#define CMDLENGTH		300     /* this should match DWMBLOCKS_CMDLENGTH macro in dwm */
-#define LINELENGTH      (CMDLENGTH*LENGTH(blocks))
-#define SHM_NAME "/dwmstatus"
 
 typedef struct {
 	char* command;
@@ -35,6 +31,10 @@ void updatedwm();
 void cleanup();
 
 #include "config.h"
+
+#define LENGTH(X)       (sizeof(X) / sizeof (X[0]))
+#define LINELENGTH      (CMDLENGTH*LENGTH(blocks))
+#define SHM_NAME "/dwmstatus"
 
 static Display *dpy;
 static int screen;
