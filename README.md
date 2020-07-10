@@ -25,6 +25,7 @@ Currently the modules are (in order from left):
 - PulseAudio volume
 - date
 - time
+- battery power
 
 ## dwm integration
 

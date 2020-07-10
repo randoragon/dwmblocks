@@ -32,6 +32,8 @@ static const Block blocks[] = {
     {"~/.scripts/dwmblocks/date", 1, 0},
 
     {"~/.scripts/dwmblocks/time", 1, 0},
+
+    {"~/.scripts/dwmblocks/power", 3, 0},
 };
 
 // Block delimiter and paddings
