@@ -118,7 +118,7 @@ void memwrite()
 {
 	if (!getstatus(statusstr[0], statusstr[1]))//Only set root if text has changed.
 		return;
-    strcpy(sharedmemory, statusstr[0]);
+    strcpy(sharedmemory + 1, statusstr[0]);
 
     updatedwm();
 }
@@ -154,10 +154,12 @@ void statusloop()
 	getcmds(-1);
 	while(statusContinue)
 	{
-		getcmds(i);
-		writestatus();
-		sleep(1.0);
-		i++;
+        if (sharedmemory[0]) {
+            getcmds(i);
+            writestatus();
+            sleep(1.0);
+            i++;
+        }
 	}
 }
 
@@ -179,7 +181,7 @@ void sighandler(int signum)
 
 void termhandler(int signum)
 {
-    strcpy(sharedmemory, "^f5^^c#FFFFFF^dwmblocks is offline^f5^");
+    strcpy(sharedmemory + 1, "^f5^^c#FFFFFF^dwmblocks is offline^f5^");
     updatedwm();
 
     shm_unlink(sharedmemory);
