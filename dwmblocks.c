@@ -157,9 +157,9 @@ void statusloop()
         if (sharedmemory[0]) {
             getcmds(i);
             writestatus();
-            sleep(1.0);
             i++;
         }
+        sleep(1.0);
 	}
 }
 
