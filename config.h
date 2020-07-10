@@ -36,5 +36,5 @@ static const Block blocks[] = {
 
 // Block delimiter and paddings
 static char delim[] = "^c#313131^^f4^^r0,0,1,19^^f5^^d^";
-static char lpad[] = "^f-1^^c#313131^^r0,0,1,19^^f1^^d^";
+static char lpad[] = "^f-1^^c#313131^^r0,0,1,19^^f5^^d^";
 static char rpad[] = "^f5^";
