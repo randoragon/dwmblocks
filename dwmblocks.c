@@ -206,6 +206,7 @@ void activehandler(int signum)
 
 void cleanup()
 {
+    memset(sharedmemory, 0, 4);
     if (dwmbcpul) {
         pclose(dwmbcpul);
     }
