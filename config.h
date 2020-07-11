@@ -1,10 +1,17 @@
-/* BE WARNED
- * the CMDLENGTH macro holds the number of characters allowed per block output.
- * Be sure CMDLENGTH is always well above your safe output length (this includes
- * delim and rpad), because if you overflow, dwm will very likely crash instantly.
+/* IMPORTANT
+ *
+ * CMDLENGTH holds the number of bytes allowed per block output.
+ * Be sure it is always well above your safe output length (this includes
+ * delim, lpad and rpad).
+ *
+ * SHM_SIZE holds the number of bytes allowed per statusstr.
+ * Be sure it's safely above the maximum statusstr length.
+ * This value is also stored in a macro with the same name
+ * in dwm.c, be sure that the two are always in sync.
  */
 
-#define CMDLENGTH		300     /* this should match DWMBLOCKS_CMDLENGTH macro in dwm */
+#define CMDLENGTH		300     /* max size for module output (bytes) */
+#define SHM_SIZE        1500    /* max size for the entire status string */
 #define DWMBCPUL_CMD    "~/.scripts/dwmblocks/cpuload"
 
 static const Block blocks[] = {

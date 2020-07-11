@@ -204,13 +204,12 @@ int main(int argc, char** argv)
 	signal(SIGINT, termhandler);
 
     /* initialize shared memory */
-    sharedmemoryfd = shm_open(SHM_NAME, O_CREAT|O_RDWR, S_IRWXU|S_IRWXG);
+    sharedmemoryfd = shm_open(SHM_NAME, O_RDWR, S_IRWXU|S_IRWXG);
     if (sharedmemoryfd < 0) {
         perror("dwmblocks: failed to open shared memory");
         return EXIT_FAILURE;
     }
-    ftruncate(sharedmemoryfd, LINELENGTH);
-    sharedmemory = (char*)mmap(NULL, LINELENGTH, PROT_READ|PROT_WRITE, MAP_SHARED, sharedmemoryfd, 0);
+    sharedmemory = (char*)mmap(NULL, SHM_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, sharedmemoryfd, 0);
     if (sharedmemory == NULL) {
         fprintf(stderr, "dwmblocks: failed to run mmap");
         return EXIT_FAILURE;
