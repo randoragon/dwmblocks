@@ -46,6 +46,7 @@ static void (*writestatus) () = memwrite;
 static char *sharedmemory;
 static int sharedmemoryfd;
 static FILE *dwmbcpul;
+static int isActive = 1;
 
 //opens process *cmd and stores output in *output
 void getcmd(const Block *block, char *output, int last)
@@ -116,9 +117,9 @@ int getstatus(char *str, char *last)
 
 void memwrite()
 {
-	if (!getstatus(statusstr[0], statusstr[1]))//Only set root if text has changed.
+	if (!getstatus(statusstr[0], statusstr[1]))
 		return;
-    strcpy(sharedmemory + 1, statusstr[0]);
+    strcpy(sharedmemory + 5, statusstr[0]);
 
     updatedwm();
 }
@@ -154,7 +155,7 @@ void statusloop()
 	getcmds(-1);
 	while(statusContinue)
 	{
-        if (sharedmemory[0]) {
+        if (isActive) {
             getcmds(i);
             writestatus();
             i++;
@@ -181,7 +182,7 @@ void sighandler(int signum)
 
 void termhandler(int signum)
 {
-    strcpy(sharedmemory + 1, "^f5^^c#FFFFFF^dwmblocks is offline^f5^");
+    strcpy(sharedmemory + 5, "^f5^^c#FFFFFF^dwmblocks is offline^f5^");
     updatedwm();
 
     shm_unlink(sharedmemory);
@@ -189,6 +190,18 @@ void termhandler(int signum)
 	statusContinue = 0;
     cleanup();
 	exit(0);
+}
+
+void activehandler(int signum)
+{
+    isActive = sharedmemory[4];
+    if (isActive) {
+        getcmds(-1);
+        writestatus();
+    } else {
+        strcpy(sharedmemory + 5, "^f5^^c#999999^dwmblocks is suspended^f5^");
+        updatedwm();
+    }
 }
 
 void cleanup()
@@ -202,6 +215,7 @@ int main(int argc, char** argv)
 {
 	signal(SIGTERM, termhandler);
 	signal(SIGINT, termhandler);
+	signal(SIGHUP, activehandler);
 
     /* initialize shared memory */
     sharedmemoryfd = shm_open(SHM_NAME, O_RDWR, S_IRWXU|S_IRWXG);
@@ -214,6 +228,10 @@ int main(int argc, char** argv)
         fprintf(stderr, "dwmblocks: failed to run mmap");
         return EXIT_FAILURE;
     }
+
+    /* store pid in first 4 bytes of shared memory to allow dwm to send signals */
+    pid_t pid = getpid();
+    memcpy(sharedmemory, &pid, 4);
 
     /* spawn subprocesses */
     FILE *dwmbcpul;
