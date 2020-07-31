@@ -14,6 +14,7 @@ typedef struct {
 	char* command;
 	unsigned int interval;
 	unsigned int signal;
+    int persistent;
 } Block;
 void dummysighandler(int num);
 void sighandler(int num);
@@ -35,6 +36,8 @@ void cleanup();
 #define LENGTH(X)       (sizeof(X) / sizeof (X[0]))
 #define LINELENGTH      (CMDLENGTH*LENGTH(blocks))
 #define SHM_NAME "/dwmstatus"
+#define SHOW_BAR sharedmemory[4]
+#define SHOW_STATUS sharedmemory[5]
 
 static Display *dpy;
 static int screen;
@@ -46,7 +49,6 @@ static void (*writestatus) () = memwrite;
 static char *sharedmemory;
 static int sharedmemoryfd;
 static FILE *dwmbcpul;
-static int isActive = 1;
 
 //opens process *cmd and stores output in *output
 void getcmd(const Block *block, char *output, int last)
@@ -75,8 +77,13 @@ void getcmds(int time)
 	const Block* current;
 	for(int i = 0; i < LENGTH(blocks); i++) {
 		current = blocks + i;
-		if ((current->interval != 0 && time % current->interval == 0) || time == -1)
-			getcmd(current,statusbar[i], i == LENGTH(blocks) - 1);
+		if ((current->interval != 0 && time % current->interval == 0) || time == -1) {
+            if (SHOW_STATUS || current->persistent) {
+                getcmd(current, statusbar[i], i == LENGTH(blocks) - 1);
+            } else {
+                statusbar[i][0] = '\0';
+            }
+        }
 	}
 }
 
@@ -119,7 +126,7 @@ void memwrite()
 {
 	if (!getstatus(statusstr[0], statusstr[1]))
 		return;
-    strcpy(sharedmemory + 5, statusstr[0]);
+    strcpy(sharedmemory + 6, statusstr[0]);
 
     updatedwm();
 }
@@ -155,7 +162,7 @@ void statusloop()
 	getcmds(-1);
 	while(statusContinue)
 	{
-        if (isActive) {
+        if (SHOW_BAR) {
             getcmds(i);
             writestatus();
             i++;
@@ -182,7 +189,7 @@ void sighandler(int signum)
 
 void termhandler(int signum)
 {
-    strcpy(sharedmemory + 5, "^f5^^c#FFFFFF^dwmblocks is offline^f5^");
+    strcpy(sharedmemory + 6, "^f5^^c#FFFFFF^dwmblocks is offline^f5^");
     updatedwm();
 
     shm_unlink(sharedmemory);
@@ -194,14 +201,8 @@ void termhandler(int signum)
 
 void activehandler(int signum)
 {
-    isActive = sharedmemory[4];
-    if (isActive) {
-        getcmds(-1);
-        writestatus();
-    } else {
-        strcpy(sharedmemory + 5, "^f5^^c#999999^dwmblocks is suspended^f5^");
-        updatedwm();
-    }
+    getcmds(-1);
+    writestatus();
 }
 
 void cleanup()
@@ -216,7 +217,7 @@ int main(int argc, char** argv)
 {
 	signal(SIGTERM, termhandler);
 	signal(SIGINT, termhandler);
-	signal(SIGHUP, activehandler);
+    signal(SIGHUP, activehandler);
 
     /* initialize shared memory */
     sharedmemoryfd = shm_open(SHM_NAME, O_RDWR, S_IRWXU|S_IRWXG);

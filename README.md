@@ -32,6 +32,13 @@ Currently the modules are (in order from left):
 **NOTE:** I'm using my own implementation of dwm status bar. Vanilla dwm uses the WM\_NAME X property,
 my version uses shared memory and fake signals. Read about more details [here](https://github.com/Randoragon/dwm#status-bar-rewrite).
 
+## Persistent modules
+
+My build of dwm adds "showStatus" next to "showBar". This allows to toggle on and off certain modules of dwmblocks without hiding the
+entire bar, which is a nice feature on lower-end machines or in case some module scripts are heavy. The modules that have a persistency
+value of 1 will always be visible if the bar is shown, whilst the ones that have persistency value of 0 will only be visible when
+the bar AND the status are shown.
+
 ## Icons
 
 I use [FontAwesome](https://fontawesome.com/) as my source for icons. This of course means that

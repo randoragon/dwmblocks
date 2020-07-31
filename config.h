@@ -15,32 +15,32 @@
 #define DWMBCPUL_CMD    "~/.scripts/dwmblocks/cpuload"
 
 static const Block blocks[] = {
-    /* Command, Update Interval, Update Signal */
+    /* Command, Update Interval, Update Signal, Persistent */
 
     // system updates
-    {"cat ~/.cache/dwmbupdates", 0, 4},
+    {"cat ~/.cache/dwmbupdates", 0, 4, 1},
 
-    {"cat ~/.cache/newsboat_notify", 0, 5},
+    {"cat ~/.cache/newsboat_notify", 0, 5, 1},
 
-    {"~/.scripts/dwmblocks/mpd", 1, 6},
+    {"~/.scripts/dwmblocks/mpd", 1, 6, 1},
 
-    {"~/.scripts/dwmblocks/storage", 10, 0},
+    {"~/.scripts/dwmblocks/storage", 10, 0, 0},
 
-    {"~/.scripts/dwmblocks/memory", 1, 0},
+    {"~/.scripts/dwmblocks/memory", 1, 0, 0},
 
-    {"cat ~/.cache/dwmbcpul", 1, 0},
+    {"cat ~/.cache/dwmbcpul", 1, 0, 0},
 
-    {"~/.scripts/dwmblocks/cputemp", 1, 0},
+    {"~/.scripts/dwmblocks/cputemp", 1, 0, 0},
 
-    {"~/.scripts/dwmblocks/network", 1, 0},
+    {"~/.scripts/dwmblocks/network", 1, 0, 0},
     
-    {"~/.scripts/dwmblocks/pulseaudio", 5, 7},
+    {"~/.scripts/dwmblocks/pulseaudio", 5, 7, 1},
 
-    {"~/.scripts/dwmblocks/date", 1, 0},
+    {"~/.scripts/dwmblocks/date", 1, 0, 1},
 
-    {"~/.scripts/dwmblocks/time", 1, 0},
+    {"~/.scripts/dwmblocks/time", 1, 0, 1},
 
-    {"~/.scripts/dwmblocks/power", 3, 0},
+    {"~/.scripts/dwmblocks/power", 3, 0, 1},
 };
 
 // Block delimiter and paddings
