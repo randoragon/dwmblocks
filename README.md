@@ -20,7 +20,7 @@ Currently the modules are (in order from left):
 - remaining storage space
 - RAM usage
 - [CPU load](https://github.com/randoragon/randoutils/tree/master/dwmbcpul)
-- CPU Temperature
+- CPU/GPU Temperature
 - network traffic (bytes sent & received per sec)
 - PulseAudio volume
 - date

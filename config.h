@@ -32,6 +32,8 @@ static const Block blocks[] = {
 
     {"~/.scripts/dwmblocks/cputemp", 1, 0, 0},
 
+    {"~/.scripts/dwmblocks/gputemp", 1, 0, 0},
+
     {"~/.scripts/dwmblocks/network", 1, 0, 0},
     
     {"~/.scripts/dwmblocks/pulseaudio", 5, 7, 1},
