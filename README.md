@@ -44,3 +44,11 @@ the bar AND the status are shown.
 I use [FontAwesome](https://fontawesome.com/) as my source for icons. This of course means that
 dwm has to be compiled with fontawesome available as a fallback font. Check [my dwm repo](https://github.com/Randoragon/dwm)
 for any clarifications.
+
+## Installation
+
+Arch Linux users can install the `dwmblocks-randoragon-git` AUR package.
+
+Otherwise, simply run the following command (if necessary, as root):
+
+    make install
