@@ -18,9 +18,9 @@ static const Block blocks[] = {
     /* Command, Update Interval, Update Signal, Persistent */
 
     // system updates
-    {"cat ~/.cache/dwmbupdates", 0, 4, 1},
+    {"cat ${TMPDIR:-/tmp}/dwmbupdates", 0, 4, 1},
 
-    {"cat ~/.cache/newsboat_notify", 0, 5, 1},
+    {"cat ${TMPDIR:-/tmp}/newsboat_notify", 0, 5, 1},
 
     {"~/.scripts/dwmblocks/mpd", 1, 6, 1},
 
@@ -28,14 +28,14 @@ static const Block blocks[] = {
 
     {"~/.scripts/dwmblocks/memory", 1, 0, 0},
 
-    {"cat ~/.cache/dwmbcpul", 1, 0, 0},
+    {"cat ${TMPDIR:-/tmp}/dwmbcpul", 1, 0, 0},
 
     {"~/.scripts/dwmblocks/cputemp", 1, 0, 0},
 
     {"~/.scripts/dwmblocks/gputemp", 1, 0, 0},
 
     {"~/.scripts/dwmblocks/network", 1, 0, 0},
-    
+
     {"~/.scripts/dwmblocks/pulseaudio", 5, 7, 1},
 
     {"~/.scripts/dwmblocks/date", 1, 0, 1},
