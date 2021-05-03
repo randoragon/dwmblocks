@@ -11,9 +11,9 @@
 #include<fcntl.h>
 
 typedef struct {
-	char* command;
-	unsigned int interval;
-	unsigned int signal;
+    char* command;
+    unsigned int interval;
+    unsigned int signal;
     int persistent;
 } Block;
 void dummysighandler(int num);
@@ -54,13 +54,13 @@ static FILE *dwmbcpul;
 void getcmd(const Block *block, char *output, int last)
 {
     output[0] = '\0';
-	char *cmd = block->command;
+    char *cmd = block->command;
     FILE *cmdf = popen(cmd,"r");
     if (!cmdf) {
         return;
     }
 
-	int i;
+    int i;
     fgets(output, CMDLENGTH, cmdf);
 
     // trim newlines
@@ -69,34 +69,34 @@ void getcmd(const Block *block, char *output, int last)
 
     if (i)
         strcat(output, last ? rpad : delim);
-	pclose(cmdf);
+    pclose(cmdf);
 }
 
 void getcmds(int time)
 {
-	const Block* current;
-	for(int i = 0; i < LENGTH(blocks); i++) {
-		current = blocks + i;
-		if ((current->interval != 0 && time % current->interval == 0) || time == -1) {
+    const Block* current;
+    for(int i = 0; i < LENGTH(blocks); i++) {
+        current = blocks + i;
+        if ((current->interval != 0 && time % current->interval == 0) || time == -1) {
             if (SHOW_STATUS || current->persistent) {
                 getcmd(current, statusbar[i], i == LENGTH(blocks) - 1);
             } else {
                 statusbar[i][0] = '\0';
             }
         }
-	}
+    }
 }
 
 #ifndef __OpenBSD__
 void getsigcmds(int signal)
 {
-	const Block *current;
-	for (int i = 0; i < LENGTH(blocks); i++)
-	{
-		current = blocks + i;
-		if (current->signal == signal)
-			getcmd(current,statusbar[i], i == LENGTH(blocks) - 1);
-	}
+    const Block *current;
+    for (int i = 0; i < LENGTH(blocks); i++)
+    {
+        current = blocks + i;
+        if (current->signal == signal)
+            getcmd(current,statusbar[i], i == LENGTH(blocks) - 1);
+    }
 }
 
 void setupsignals()
@@ -106,26 +106,26 @@ void setupsignals()
         signal(i, dummysighandler);
 
     for(int i = 0; i < LENGTH(blocks); i++)
-	{
+    {
         if (blocks[i].signal > 0)
-			signal(SIGRTMIN+blocks[i].signal, sighandler);
-	}
+            signal(SIGRTMIN+blocks[i].signal, sighandler);
+    }
 }
 #endif
 
 int getstatus(char *str, char *last)
 {
-	strcpy(last, str);
+    strcpy(last, str);
     strcpy(str, lpad);
-	for(int i = 0; i < LENGTH(blocks); i++)
-		strcat(str, statusbar[i]);
-	return strcmp(str, last);//0 if they are the same
+    for(int i = 0; i < LENGTH(blocks); i++)
+        strcat(str, statusbar[i]);
+    return strcmp(str, last);//0 if they are the same
 }
 
 void memwrite()
 {
-	if (!getstatus(statusstr[0], statusstr[1]))
-		return;
+    if (!getstatus(statusstr[0], statusstr[1]))
+        return;
     strcpy(sharedmemory + 6, statusstr[0]);
 
     updatedwm();
@@ -146,29 +146,29 @@ void updatedwm()
 
 void pstdout()
 {
-	if (!getstatus(statusstr[0], statusstr[1]))//Only write out if text has changed.
-		return;
-	printf("%s\n",statusstr[0]);
-	fflush(stdout);
+    if (!getstatus(statusstr[0], statusstr[1]))//Only write out if text has changed.
+        return;
+    printf("%s\n",statusstr[0]);
+    fflush(stdout);
 }
 
 
 void statusloop()
 {
 #ifndef __OpenBSD__
-	setupsignals();
+    setupsignals();
 #endif
-	int i = 0;
-	getcmds(-1);
-	while(statusContinue)
-	{
+    int i = 0;
+    getcmds(-1);
+    while(statusContinue)
+    {
         if (SHOW_BAR) {
             getcmds(i);
             writestatus();
             i++;
         }
         sleep(1.0);
-	}
+    }
 }
 
 #ifndef __OpenBSD__
@@ -182,8 +182,8 @@ void dummysighandler(int signum)
 #ifndef __OpenBSD__
 void sighandler(int signum)
 {
-	getsigcmds(signum-SIGRTMIN);
-	writestatus();
+    getsigcmds(signum-SIGRTMIN);
+    writestatus();
 }
 #endif
 
@@ -194,9 +194,9 @@ void termhandler(int signum)
 
     shm_unlink(sharedmemory);
 
-	statusContinue = 0;
+    statusContinue = 0;
     cleanup();
-	exit(0);
+    exit(0);
 }
 
 void activehandler(int signum)
@@ -215,8 +215,8 @@ void cleanup()
 
 int main(int argc, char** argv)
 {
-	signal(SIGTERM, termhandler);
-	signal(SIGINT, termhandler);
+    signal(SIGTERM, termhandler);
+    signal(SIGINT, termhandler);
     signal(SIGHUP, activehandler);
 
     /* initialize shared memory */
@@ -239,6 +239,6 @@ int main(int argc, char** argv)
     FILE *dwmbcpul;
     dwmbcpul = popen(DWMBCPUL_CMD, "r");
 
-	statusloop();
+    statusloop();
     cleanup();
 }

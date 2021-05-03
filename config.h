@@ -10,7 +10,7 @@
  * in dwm.c, be sure that the two are always in sync.
  */
 
-#define CMDLENGTH		300     /* max size for module output (bytes) */
+#define CMDLENGTH       300     /* max size for module output (bytes) */
 #define SHM_SIZE        1500    /* max size for the entire status string */
 #define DWMBCPUL_CMD    "~/.scripts/dwmblocks/cpuload"
 
