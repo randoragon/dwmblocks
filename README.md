@@ -47,8 +47,6 @@ for any clarifications.
 
 ## Installation
 
-Arch Linux users can install the `dwmblocks-randoragon-git` AUR package.
-
-Otherwise, simply run the following command (if necessary, as root):
+Simply run the following command (if necessary, as root):
 
     make install
